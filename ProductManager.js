@@ -22,13 +22,19 @@ class ProductManager {
         } else return 1
     }
 
+
     // Función que valida que el código no se repita y que todos los campos estén completos
     checkFields = (product) => {
 
         const emptyFields = []
 
         const isCodeRepeated = this.products.some(prod => prod.code === product.code)
-        if(isCodeRepeated) return console.error(`El código ${product.code} ya está en uso`)
+
+
+        if(isCodeRepeated) {
+            console.error(`El código ${product.code} ya está en uso`)
+            return false
+        }
 
         // Valida que todos los valores sean truthy. Si no lo son, el nombre de la propiedad se guarda en el array
         const productFields = Object.entries(product)
@@ -37,9 +43,11 @@ class ProductManager {
         })
 
         // Sólo agrega el producto si no existen campos vacíos o inválidos
-        emptyFields.length === 0 ? 
-            this.products.push(product) : 
+        if(emptyFields.length !== 0) { 
             console.error("Debe completar todos los campos. Campos vacíos: ", emptyFields)
+            return false
+        } 
+        return true
     }
 
     addProduct = (title, description, price, thumbnail, code, stock) => {
@@ -56,7 +64,9 @@ class ProductManager {
             stock
         }
 
-        this.checkFields(product)
+        if(this.checkFields(product)) {
+            this.products.push(product)
+        }
     }
 }
 
