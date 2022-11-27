@@ -21,6 +21,11 @@ class ProductManager {
             })
     }
 
+    saveProducts = (products) => {
+        const productsStr = JSON.stringify(products)
+        fs.promises.writeFile(this.path, productsStr, error => console.log(error))
+    }
+
     getProductById = async (id) => {
 
         const products = await this.getProducts()
@@ -90,11 +95,7 @@ class ProductManager {
 
             products.push(product)
 
-            const productsStr = JSON.stringify(products)
-
-            fs.promises.writeFile(this.path, productsStr, error => {
-                console.log(error)
-            })
+            this.saveProducts(products)
         }
     }
 
@@ -104,20 +105,15 @@ class ProductManager {
         const checkID = () => products.some(prod => prod.id === id)
         if(!checkID()) return console.log("El producto no se encontró")
 
-        const productToUpdate = products.find(prod => prod.id === id)
+        const productToUpdate = products.findIndex(prod => prod.id === id)
 
-        const updatedProduct = {
-            ... productToUpdate,
+        products[productToUpdate] = {
+            ... products[productToUpdate],
             ... obj,
             id: id
         }
 
-        const updatedProducts = products.filter(prod => prod.id !== id)
-        updatedProducts.push(updatedProduct)
-
-        const productsStr = JSON.stringify(updatedProducts)
-
-        fs.promises.writeFile(this.path, productsStr, error => console.log(error))
+        this.saveProducts(products)
     }
 
     deleteProduct = async (id) => {
@@ -128,9 +124,7 @@ class ProductManager {
 
         const updatedProducts = products.filter(prod => prod.id !== id)
 
-        const productsStr = JSON.stringify(updatedProducts)
-
-        fs.promises.writeFile(this.path, productsStr, error => console.log(error))
+        this.saveProducts(updatedProducts)
     }
 }
 
