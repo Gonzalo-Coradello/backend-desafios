@@ -13,15 +13,9 @@ app.get('/products', async (req, res) => {
 
     const limit = req.query.limit
 
-    if(limit) {
-        const limitedProducts = []
-
-        for(let i = 0; i < limit; i++) {
-            if(products[i]) limitedProducts.push(products[i])
-        }
-
-        return res.json(limitedProducts)
-    } else res.json(products)
+    if(limit) products.splice(limit)
+    
+    res.json(products)
 })
 
 app.get('/products/:id', async (req, res) => {
